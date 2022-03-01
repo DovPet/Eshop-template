@@ -3,9 +3,11 @@ import Image from "next/image";
 import { StarIcon, ShoppingCartIcon } from "@heroicons/react/solid";
 import Currency from "react-currency-formatter";
 import { useDispatch } from "react-redux";
+import { useToasts } from 'react-toast-notifications';
 import { addToBasket } from "../slices/basketSlice";
 
 function Product({ id, title, price, description, category, image }) {
+  const { addToast } = useToasts();
   const MIN_RATING = 0;
   const MAX_RATING = 5;
   const [rating] = useState(
@@ -26,10 +28,11 @@ function Product({ id, title, price, description, category, image }) {
       freeShipping
     };
     dispatch(addToBasket(product));
+    addToast(`Item ${title} added to basket`, { appearance: 'success' })
   };
 
   return (
-    <div className="relative flex flex-col m-5 bg-white z-30 p-10 cursor-pointer">
+    <div className="relative flex flex-col m-5 bg-white z-30 p-10 cursor-pointer duration-500 transform hover:scale-105">
       <p className="absolute top-2 right-2 text-xs italic text-gray-400">
         {category}
       </p>
@@ -40,7 +43,7 @@ function Product({ id, title, price, description, category, image }) {
         {Array(rating)
           .fill()
           .map(() => (
-            <StarIcon className="h-5 text-yellow-500" />
+            <StarIcon key={title + rating} className="h-5 text-yellow-500" />
           ))}
       </div>
       <p className="text-xs my-2 line-clamp-2">{description}</p>

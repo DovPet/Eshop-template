@@ -45,7 +45,7 @@ function CheckoutProduct({
           {Array(rating)
             .fill()
             .map(() => (
-              <StarIcon className="h-5 text-yellow-500" />
+              <StarIcon key={title + id} className="h-5 text-yellow-500" />
             ))}
         </div>
         <p className="text-xs my-2 line-clamp-3">{description}</p>
