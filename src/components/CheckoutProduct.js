@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
 import { StarIcon, ShoppingCartIcon } from "@heroicons/react/solid";
 import Currency from "react-currency-formatter";

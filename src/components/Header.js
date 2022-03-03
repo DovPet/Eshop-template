@@ -15,6 +15,11 @@ function Header() {
   const router = useRouter();
   const items = useSelector(selectItems);
 
+  let categories;
+  if (typeof window !== "undefined") {
+    const categoriesStr = localStorage.getItem("categories");
+    categories = categoriesStr ? JSON.parse(categoriesStr) : undefined;
+  }
   return (
     <header>
       <div className="flex items-center bg-amazon_blue p-1 flex-grow py-2">
@@ -62,16 +67,24 @@ function Header() {
       </div>
 
       <div className="flex items-center bg-amazon_blue-light text-white text-sm space-x-3 p-2 pl-6">
-        <p className="link flex items-center">
+        <p
+          className="link flex items-center"
+          onClick={() => router.push("/product")}
+        >
           <MenuIcon className="h-6 mr-1" />
-          All
+          <p>All</p>
         </p>
-        <p className="link">Today`s Deals</p>
-        <p className="link">Electronics</p>
-        <p className="link">Clothing</p>
-        <p className="link">Business</p>
-        <p className="link hidden lg:inline-flex">Food & Grocery</p>
-        <p className="link hidden lg:inline-flex">Health & Personal Care</p>
+        {categories &&
+          categories.map((category) => (
+            <p
+              className="link capitalize"
+              onClick={() =>
+                router.push(`/${category.trim().split(" ").join("-")}`)
+              }
+            >
+              {category}
+            </p>
+          ))}
       </div>
     </header>
   );

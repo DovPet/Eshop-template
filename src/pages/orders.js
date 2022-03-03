@@ -6,7 +6,6 @@ import moment from "moment";
 import OrderItem from "../components/OrderItem";
 
 function orders({ orders, session }) {
-  console.log(orders);
   return (
     <div>
       <Header />

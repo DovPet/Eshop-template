@@ -1,9 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Header from "../components/Header";
 import { CheckCircleIcon } from "@heroicons/react/solid";
 import { useRouter } from "next/router";
+import { useDispatch } from "react-redux";
+import { clearState } from "../slices/basketSlice";
 
 function success() {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    localStorage.setItem("state", JSON.stringify([]));
+
+    dispatch(clearState());
+  }, []);
   const router = useRouter();
   return (
     <div className="bg-gray-100 h-screen">

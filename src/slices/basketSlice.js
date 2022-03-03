@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const saveToLocalStorage = (state) => {
   try {
-    localStorage.setItem('state', JSON.stringify(state));
+    localStorage.setItem("state", JSON.stringify(state));
   } catch (e) {
     console.error(e);
   }
@@ -10,8 +10,10 @@ const saveToLocalStorage = (state) => {
 
 const loadFromLocalStorage = () => {
   try {
-    const stateStr = localStorage.getItem('state');
-    return stateStr ? JSON.parse(stateStr) : undefined;
+    if (typeof window !== "undefined") {
+      const stateStr = localStorage.getItem("state");
+      return stateStr ? JSON.parse(stateStr) : undefined;
+    }
   } catch (e) {
     console.error(e);
     return undefined;
@@ -27,10 +29,8 @@ export const basketSlice = createSlice({
   initialState,
   reducers: {
     addToBasket: (state, action) => {
-      console.log(state)
-      console.log(state.items)
       state.items = [...state.items, action.payload];
-      saveToLocalStorage(state.items)
+      saveToLocalStorage(state.items);
     },
     removeFromBasket: (state, action) => {
       const index = state.items.findIndex((bi) => bi.id === action.payload.id);
@@ -44,16 +44,38 @@ export const basketSlice = createSlice({
       }
 
       state.items = newBasket;
-      saveToLocalStorage(state.items)
+      saveToLocalStorage(state.items);
+    },
+    addProducts: (state, action) => {
+      state.products = action.payload;
+      state.filteredProducts = action.payload;
+    },
+    updateFilters: (state, action) => {
+      state.filteredProducts = action.payload;
+    },
+    clearFilters: (state) => {
+      state.filteredProducts = state.products;
+    },
+    clearState: (state, action) => {
+      state.items = [];
     },
   },
 });
 
-export const { addToBasket, removeFromBasket } = basketSlice.actions;
+export const {
+  addToBasket,
+  removeFromBasket,
+  clearState,
+  addProducts,
+  updateFilters,
+  clearFilters,
+} = basketSlice.actions;
 
 // Selectors - This is how we pull information from the Global store slice
 export const selectItems = (state) => state.basket.items;
 export const selectTotal = (state) =>
   state.basket.items.reduce((total, item) => total + item.price, 0);
+export const selectProducts = (state) => state.basket.products;
+export const selectFilteredProducts = (state) => state.basket.filteredProducts;
 
 export default basketSlice.reducer;
