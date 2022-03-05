@@ -8,7 +8,6 @@ import { useEffect, useState } from "react";
 export default function Home({ products, categories }) {
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
-    console.log(products);
     if (products) setIsLoading(false);
     else setIsLoading(true);
   }, [products]);

@@ -4,11 +4,10 @@ import Product from './Product'
 
 function FiltredProducts() {
     const products = useSelector(selectFilteredProducts)
-    console.log(products);
     return (
         <>
             {products && (
-                <p className="mb-4 font-bold text-xl text-gray-500">{products.length} Products Fond</p>
+                <p className="mb-4 font-bold text-xl text-gray-500">{products.length} Products Found</p>
             )}
             <div className="grid grid-flow-row-dense md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
                 

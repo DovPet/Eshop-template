@@ -7,6 +7,7 @@ import { useToasts } from "react-toast-notifications";
 import { addToBasket } from "../slices/basketSlice";
 import { useRouter } from "next/router";
 import Fade from "react-reveal/Fade";
+import { motion } from "framer-motion";
 
 function Product({ id, title, price, description, category, image }) {
   const { addToast } = useToasts();
@@ -38,41 +39,46 @@ function Product({ id, title, price, description, category, image }) {
   const linkTitle = title.trim().split(" ").join("-");
   return (
     <Fade bottom>
-      <div
-        className="relative flex flex-col m-5 bg-white z-30 p-10 cursor-pointer duration-500 transform hover:scale-105 rounded-xl"
+    <div className="z-30">
+      <motion.div
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
         onClick={() =>
           router.push(`/product/${linkCategory}/${linkTitle}/${id}`)
         }
       >
-        <p className="absolute top-2 right-2 text-xs italic text-gray-400">
-          {category}
-        </p>
-        <Image src={image} height={200} width={200} objectFit="contain" />
-        <h4 className="my-3">{title}</h4>
+        <div className="relative flex flex-col m-5 bg-white z-30 p-10 cursor-pointer duration-500 transform rounded-xl">
+          <p className="absolute top-2 right-2 text-xs italic text-gray-400">
+            {category}
+          </p>
+            <Image src={image} height={200} width={200} objectFit="contain" />
+          <h4 className="my-3">{title}</h4>
 
-        <div className="flex">
-          {Array(rating)
-            .fill()
-            .map(() => (
-              <StarIcon
-                key={title + id + rating}
-                className="h-5 text-yellow-500"
-              />
-            ))}
-        </div>
-        <p className="text-xs my-2 line-clamp-2">{description}</p>
-        <div className="mb-5">
-          <Currency quantity={price} currency="EUR" />
-        </div>
-        {freeShipping && (
-          <div className="flex items-center space-x-2 -mt-5">
-            <ShoppingCartIcon className="w-5" />
-            <p className="text-sx text-gray-500">Free Delivery</p>
+          <div className="flex">
+            {Array(rating)
+              .fill()
+              .map(() => (
+                <StarIcon
+                  key={title + id + rating}
+                  className="h-5 text-yellow-500"
+                />
+              ))}
           </div>
-        )}
-        <button className="mt-auto button" onClick={addItemToBasket}>
-          Add to Basket
-        </button>
+          <p className="text-xs my-2 line-clamp-2">{description}</p>
+          <div className="mb-5">
+            <Currency quantity={price} currency="EUR" />
+          </div>
+          {freeShipping && (
+            <div className="flex items-center space-x-2 -mt-5">
+              <ShoppingCartIcon className="w-5" />
+              <p className="text-sx text-gray-500">Free Delivery</p>
+            </div>
+          )}
+          <button className="mt-auto button" onClick={addItemToBasket}>
+            Add to Basket
+          </button>
+        </div>
+      </motion.div>
       </div>
     </Fade>
   );

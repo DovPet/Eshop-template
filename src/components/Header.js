@@ -79,7 +79,7 @@ function Header() {
             <p
               className="link capitalize"
               onClick={() =>
-                router.push(`/${category.trim().split(" ").join("-")}`)
+                router.push(`/product/${category.trim().split(" ").join("-")}`)
               }
             >
               {category}

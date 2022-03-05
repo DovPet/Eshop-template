@@ -2,7 +2,7 @@ import Header from "../../../../components/Header";
 import Link from "next/link";
 import Image from "next/image";
 import { StarIcon, ShoppingCartIcon } from "@heroicons/react/solid";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Currency from "react-currency-formatter";
 import Head from "next/head";
 import { useToasts } from "react-toast-notifications";
@@ -10,14 +10,40 @@ import { useToasts } from "react-toast-notifications";
 import Product from "../../../../components/Product";
 import { useDispatch } from "react-redux";
 import { addToBasket } from "../../../../slices/basketSlice";
+import { motion } from "framer-motion";
 
-function Details({ product, products, images }) {
+function Details({ product, products, fakeImages }) {
+  const productImage = {
+    thumbnails: {
+      small: {
+        url: product.image,
+        width: 56,
+        height: 36,
+      },
+      large: {
+        url: product.image,
+        width: 801,
+        height: 512,
+      },
+      full: {
+        url: product.image,
+        width: 3000,
+        height: 3000,
+      },
+    },
+  };
+  const images = [productImage, ...fakeImages];
   const dispatch = useDispatch();
   const { addToast } = useToasts();
   const { id, title, price, description, category, rating } = product;
   const [activeImage, setActiveImage] = useState(
     images[0].thumbnails.large.url
   );
+
+  useEffect(() => {
+    setActiveImage(images[0].thumbnails.large.url);
+  }, [product]);
+
   const MIN_RATING = 0;
   const MAX_RATING = 5;
   const [fakeRating] = useState(
@@ -40,12 +66,42 @@ function Details({ product, products, images }) {
     addToast(`Item ${title} added to basket`, { appearance: "success" });
   };
 
+  const easing = [0.6, -0.05, 0.01, 0.99];
+
+  const fadeInUp = {
+    initial: {
+      y: 60,
+      opacity: 0,
+    },
+    animate: {
+      y: 0,
+      opacity: 1,
+      transision: {
+        duration: 0.6,
+        ease: easing,
+      },
+    },
+    exit: {
+      y: 60,
+      opacity: 0,
+    },
+  };
+
+  const stagger = {
+    animate: {
+      transition: {
+        staggerChildren: 0.05,
+      },
+    },
+  };
+
   return (
-    <>
+    <motion.div exit="exit" initial="initial" animate="animate">
       <Head>
         <title>{title} | Eshop MVP</title>
       </Head>
       <Header />
+
       <div className="bg-gray-200 p-10 mb-10">
         <div className="max-w-screen-xl mx-auto">
           <span className="font-medium">
@@ -55,8 +111,17 @@ function Details({ product, products, images }) {
           <span className="font-medium">
             <Link href="/product">Product</Link>
           </span>{" "}
-          / <span className="font-medium capitalize">
-            <Link href={`/${category.toString().trim().split(" ").join("-")}`}>{category}</Link>
+          /{" "}
+          <span className="font-medium capitalize">
+            <Link
+              href={`/product/${category
+                .toString()
+                .trim()
+                .split(" ")
+                .join("-")}`}
+            >
+              {category}
+            </Link>
           </span>{" "}
           / <span className="text-yellow-500">{title}</span>
         </div>
@@ -64,7 +129,14 @@ function Details({ product, products, images }) {
       <main className="max-w-screen-xl mx-auto mt-5">
         <div className="flex flex-wrap">
           <div className="px-5 mb-7 w-full md:w-7/12">
-            <div className="w-full mb-4">
+            <motion.div
+              exit={{ x: 200, opacity: 0 }}
+              initial={{ x: 200, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="w-full mb-4"
+              key={`image-${id}`}
+            >
               <Image
                 className="w-full rounded-lg"
                 width={700}
@@ -73,7 +145,7 @@ function Details({ product, products, images }) {
                 src={activeImage}
                 alt=""
               />
-            </div>
+            </motion.div>
             <div className="flex items-center">
               {images &&
                 images.map((image) => (
@@ -94,31 +166,68 @@ function Details({ product, products, images }) {
                 ))}
             </div>
           </div>
-          <div className="px-5 mb-10 w-full md:w-5/12">
-            <p className="font-serif text-xl text-black">{category}</p>
-            <h1 className="my-2 text-5xl text-yellow-500 mb-7">{title}</h1>
-            <p className="text-gray-600 text-base mb-5">{description}</p>
-            <p className="flex items-center">
+          <motion.div
+            key={`stagg-${id}`}
+            variants={stagger}
+            className="px-5 mb-10 w-full md:w-5/12"
+          >
+            {" "}
+            <motion.p
+              variants={fadeInUp}
+              className="font-serif text-xl text-black"
+              key={`category-${id}`}
+            >
+              {category}
+            </motion.p>
+            <motion.h1
+              variants={fadeInUp}
+              className="my-2 text-5xl text-yellow-500 mb-7"
+              key={`title-${id}`}
+            >
+              {title}
+            </motion.h1>
+            <motion.p
+              variants={fadeInUp}
+              className="text-gray-600 text-base mb-5"
+              key={`desc-${id}`}
+            >
+              {description}
+            </motion.p>
+            <motion.p
+              key={`rating-${id}`}
+              variants={fadeInUp}
+              className="flex items-center"
+            >
               <b className="mr-1">Rating:</b> {rating.rate}
               <StarIcon className="h-5 text-yellow-500" />
               <span> ({rating.count})</span>
-            </p>
-            <p>
+            </motion.p>
+            <motion.p variants={fadeInUp} key={`stock-${id}`}>
               <b>Stock:</b> {stock > 0 ? "Available in stock" : "Stock out!"}
-            </p>
-            <p className="text-yellow-500 text-2xl mb-7">
+            </motion.p>
+            <motion.p
+              key={`price-${id}`}
+              variants={fadeInUp}
+              className="text-yellow-500 text-2xl mb-7"
+            >
               <Currency quantity={price} />
-            </p>
+            </motion.p>
             {freeShipping && (
-              <div className="flex items-center space-x-2">
+              <motion.div
+                key={`ship-${id}`}
+                variants={fadeInUp}
+                className="flex items-center space-x-2"
+              >
                 <ShoppingCartIcon className="w-5" />
                 <p className="text-xs text-gray-500">Free delivery</p>
-              </div>
+              </motion.div>
             )}
-            <button onClick={addItemToBasket} className="w-full button mt-4">
-              Add to Basket
-            </button>
-          </div>
+            <motion.div key={`button-${id}`} variants={fadeInUp}>
+              <button onClick={addItemToBasket} className="w-full button mt-4">
+                Add to Basket
+              </button>
+            </motion.div>
+          </motion.div>
         </div>
       </main>
       <div className="mt-12 bg-gradient-to-t from-gray-100 to-transparent">
@@ -158,7 +267,7 @@ function Details({ product, products, images }) {
           </div>
         </div>
       </div>
-    </>
+    </motion.div>
   );
 }
 
@@ -192,29 +301,12 @@ export const getStaticProps = async (context) => {
   );
   const productCategory = product.category;
   const products = await fetch(
-    "https://fakestoreapi.com/products/category/" + productCategory
+    `https://fakestoreapi.com/products/category/${productCategory}?limit=5`
   ).then((response) => response.json());
 
-  const images = [
-    {
-      thumbnails: {
-        small: {
-          url: product.image,
-          width: 56,
-          height: 36,
-        },
-        large: {
-          url: product.image,
-          width: 801,
-          height: 512,
-        },
-        full: {
-          url: product.image,
-          width: 3000,
-          height: 3000,
-        },
-      },
-    },
+  const filteredProducts = products.filter((prod) => prod.id != id);
+
+  const fakeImages = [
     {
       thumbnails: {
         small: {
@@ -275,6 +367,6 @@ export const getStaticProps = async (context) => {
   ];
 
   return {
-    props: { product, products, images },
+    props: { product, products: filteredProducts, fakeImages },
   };
 };

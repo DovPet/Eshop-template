@@ -2,6 +2,7 @@ import { Provider } from "react-redux";
 import { store } from "../app/store";
 import { SessionProvider } from "next-auth/react";
 import { ToastProvider } from "react-toast-notifications";
+import { AnimatePresence } from "framer-motion";
 import "../styles/globals.css";
 import NextNProgress from "nextjs-progressbar";
 import { useEffect } from "react";
@@ -13,17 +14,16 @@ const MyApp = ({ Component, pageProps }) => {
     const categoriesStr = localStorage.getItem("categories");
     categories = categoriesStr ? JSON.parse(categoriesStr) : undefined;
 
-    if(!categories)
-    {
+    if (!categories) {
       categories = await fetch(
         "https://fakestoreapi.com/products/categories"
       ).then((res) => res.json());
       localStorage.setItem("categories", JSON.stringify(categories));
     }
-
   }, []);
 
   return (
+    <AnimatePresence>
     <ToastProvider autoDismiss={true} autoDismissTimeout={2000}>
       <SessionProvider session={pageProps.session}>
         <Provider store={store}>
@@ -32,6 +32,7 @@ const MyApp = ({ Component, pageProps }) => {
         </Provider>
       </SessionProvider>
     </ToastProvider>
+    </AnimatePresence>
   );
 };
 
