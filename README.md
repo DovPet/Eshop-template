@@ -1,6 +1,6 @@
 # Installation Steps
 
-
+Deployed live: https://eshop-template-dovpet.vercel.app/
 
 ## Using npm
 
